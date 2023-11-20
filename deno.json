@@ -1,6 +1,11 @@
 {
-    "tasks": {
-        "test": "deno test   -A   test.js"
-    
-      }
+  "tasks": {
+    "login_test": "deno test   -A   ./tests/login_test.js",
+    "query_stock_basic_test": "deno test   -A   ./tests/query_stock_basic_test.js",
+    "login2_test": "deno test   -A   ./tests/login2_test.js",
+    "wasi_send_msg_test": "deno test   -A   ./tests/wasi_send_msg_test.js",
+    "query_sz50_stocks_test": "deno test   -A   ./tests/query_sz50_stocks_test.js",
+    "query_hs300_stocks_test": "deno test   -A   ./tests/query_hs300_stocks_test.js",
+    "query_zz500_stocks_test": "deno test   -A   ./tests/query_zz500_stocks_test.js"
+  }
 }
