@@ -6,6 +6,8 @@
     "wasi_send_msg_test": "deno test   -A   ./tests/wasi_send_msg_test.js",
     "query_sz50_stocks_test": "deno test   -A   ./tests/query_sz50_stocks_test.js",
     "query_hs300_stocks_test": "deno test   -A   ./tests/query_hs300_stocks_test.js",
-    "query_zz500_stocks_test": "deno test   -A   ./tests/query_zz500_stocks_test.js"
+    "query_zz500_stocks_test": "deno test   -A   ./tests/query_zz500_stocks_test.js",
+    "mod_test": "deno test   -A   ./tests/mod_test.js",
+    "query_history_k_data_plus_test": "deno test   -A   ./tests/query_history_k_data_plus_test.js"
   }
 }

@@ -1,7 +1,10 @@
-// import CRC32 from "npm:crc-32";
-import { crc32 } from "https://deno.land/x/crc32/mod.ts";
-// import {crc32} from 'https://deno.land/x/crc32hash@v1.0.0/mod.ts';
-// import { crc32 } from "https://deno.land/x/compress@v0.3.8/zlib/zlib/crc32.ts";
+import pako from 'npm:pako'
+
+
+// import { crc32fast } from './crc32/crc32_wasm.js'
+
+
+import  {crc32}  from "https://deno.land/x/crc32wasm_deno@v0.0.2/mod.ts.js";
 
 import * as cons from "./const.js";
 
@@ -37,51 +40,70 @@ const to_message_header = (msg_type, total_msg_length) => {
   return return_str;
 };
 
-// const query_stock_basic=()=>{
 
+
+// export async function login2() {
+//   const conn = await Deno.connect({
+//     hostname: cons.BAOSTOCK_SERVER_IP,
+//     port: cons.BAOSTOCK_SERVER_PORT,
+//   });
+
+//   let user_id = "anonymous";
+//   let password = "123456";
+//   // # 组织体信息
+//   const msg_body = "login" + cons.MESSAGE_SPLIT + user_id + cons.MESSAGE_SPLIT +
+//     password + cons.MESSAGE_SPLIT + "0";
+
+//   // # 组织头信息
+//   const msg_header = to_message_header(
+//     cons.MESSAGE_TYPE_LOGIN_REQUEST,
+//     msg_body.length,
+//   );
+//   const head_body = msg_header + msg_body;
+//   //00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010
+//   // console.log(head_body);
+
+//   //   const input = Buffer.from(head_body);
+//   //   const expected = Buffer.from([0x47, 0xfa, 0x55, 0x70]);
+//   //  let crc32str =  crc32(input)
+
+//   // let  crc32str = crc32(input).toString(10);
+//   // const crc32str = crc32.unsigned(head_body, 'utf8').toString(10);
+//   const crc32str = CRC32.buf(new TextEncoder().encode(head_body)) >>> 0;
+//   console.log(crc32str);
+
+//   //"00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010\x011635716994\n"
+//   let msg = head_body + cons.MESSAGE_SPLIT + crc32str + "\\n";
+//   console.log(msg);
+//   await conn.write(new TextEncoder().encode(msg));
+
+//   const buf = new Uint8Array(1024);
+//   const n = await conn.read(buf);
+//   let result = new TextDecoder().decode(buf.subarray(0, n));
+//   console.log(result);
+
+//   conn.close();
+
+//   return result;
 // }
 
-export async function login2() {
-  const conn = await Deno.connect({
-    hostname: cons.BAOSTOCK_SERVER_IP,
-    port: cons.BAOSTOCK_SERVER_PORT,
-  });
 
-  let user_id = "anonymous";
-  let password = "123456";
-  // # 组织体信息
-  const msg_body = "login" + cons.MESSAGE_SPLIT + user_id + cons.MESSAGE_SPLIT +
-    password + cons.MESSAGE_SPLIT + "0";
 
-  // # 组织头信息
-  const msg_header = to_message_header(
-    cons.MESSAGE_TYPE_LOGIN_REQUEST,
-    msg_body.length,
-  );
-  const head_body = msg_header + msg_body;
-  //00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010
-  // console.log(head_body);
+function mergeUint8Arrays(arrays) {
+  // sum of individual array lengths
+  let totalLength = arrays.reduce((acc, value) => acc + value.length, 0);
 
-  //   const input = Buffer.from(head_body);
-  //   const expected = Buffer.from([0x47, 0xfa, 0x55, 0x70]);
-  //  let crc32str =  crc32(input)
+  if (!arrays.length) return null;
 
-  // let  crc32str = crc32(input).toString(10);
-  // const crc32str = crc32.unsigned(head_body, 'utf8').toString(10);
-  const crc32str = CRC32.buf(new TextEncoder().encode(head_body)) >>> 0;
-  console.log(crc32str);
+  let result = new Uint8Array(totalLength);
 
-  //"00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010\x011635716994\n"
-  let msg = head_body + cons.MESSAGE_SPLIT + crc32str + "\\n";
-  console.log(msg);
-  await conn.write(new TextEncoder().encode(msg));
-
-  const buf = new Uint8Array(1024);
-  const n = await conn.read(buf);
-  let result = new TextDecoder().decode(buf.subarray(0, n));
-  console.log(result);
-
-  conn.close();
+  // for each array - copy it over result
+  // next array is copied right after the previous one
+  let length = 0;
+  for (let array of arrays) {
+    result.set(array, length);
+    length += array.length;
+  }
 
   return result;
 }
@@ -102,41 +124,59 @@ export class BaoStockApi {
       });
 
       const msg1 = msg + "\n";
-      // console.log(msg1)
+
 
       await conn.write(new TextEncoder().encode(msg1));
 
       let n = 0;
-      let resultMsg = "";
+
+      const buffArray = []
 
       do {
         const buf = new Uint8Array(1024);
-
         n = await conn.read(buf);
+        const recv = buf.subarray(0, n)
+        buffArray.push(recv)
 
-        let result = new TextDecoder().decode(buf.subarray(0, n));
-        // console.log("result"+result);
+        const endMsg = new TextDecoder().decode(recv.slice(-13))
 
-        resultMsg += result;
-        if (result.slice(-13) == "<![CDATA[]]>\n") {
-          //  console.log("111")
-
+        if (endMsg == "<![CDATA[]]>\n") {
           break;
         }
       } while (n > 0);
 
       conn.close();
 
-      // console.log(resultMsg)
-      return resultMsg;
+      const receive = mergeUint8Arrays(buffArray)
+      const head_bytes = receive.slice(0, cons.MESSAGE_HEADER_LENGTH)
+      const head_str = new TextDecoder().decode(head_bytes)
+      console.log(head_str)
+      console.log(head_str.slice(8, 10))
+      // const head_arr = head_str.split(cons.MESSAGE_SPLIT)
+
+      if (head_str.slice(8, 10) == '96') {//需要解压
+
+        // console.log('000pppp')
+        const head_inner_length = parseInt(head_str.slice(-10))
+        console.log(head_inner_length)
+
+        let output = pako.inflate(receive.slice(cons.MESSAGE_HEADER_LENGTH, cons.MESSAGE_HEADER_LENGTH + head_inner_length))
+        // var output = new jsscompress.inflate();
+        const body_str = new TextDecoder().decode(output)
+
+        return body_str
+
+      } else {
+        return new TextDecoder().decode(receive)
+      }
+      // const receive = new TextDecoder().decode(mergeBuffArray)
+
+      // return receive;
     } catch (error) {
       console.log(error);
     }
   }
 
-  async wasi_send_msg1() {
-    wasi_send_msg("");
-  }
 
   async login() {
     // let user_id = this.user_id;
@@ -149,6 +189,8 @@ export class BaoStockApi {
     // const msg_header = to_message_header(
     //     cons.MESSAGE_TYPE_LOGIN_REQUEST, msg_body.replaceAll(cons.MESSAGE_SPLIT, " ").length)
     // const head_body = msg_header + msg_body
+
+    // console.log(gzipSizeSync(head_body));
 
     // const crc32str = crc32(head_body)
     // console.log(crc32str);
@@ -228,17 +270,9 @@ export class BaoStockApi {
         throw "未登录";
       }
 
-      // let msg = "00.8.80\x0145\x010000000037query_stock_basic\x01anonymous\x011\x0110000\x01\x01\x01857658827"
       let msg =
         "00.8.80\x0145\x010000000037query_stock_basic\x01anonymous\x011\x0110000\x01\x01\x01857658827";
-      // await conn.write(new TextEncoder().encode(msg));
 
-      // const buf = new Uint8Array(1024);
-      // const n = await conn.read(buf);
-      // let result = new TextDecoder().decode(buf.subarray(0, n))
-      // console.log(result);
-
-      // conn.close();
 
       let receive_data = await this.send_msg(msg);
 
@@ -250,6 +284,30 @@ export class BaoStockApi {
     } catch (error) {
       console.log(error);
       return null;
+    }
+  }
+
+  async query_history_k_data_plus(stock_code, start_date, end_date) {
+    try {
+
+
+      let body = `00.8.80\x0195\x010000000172query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST\x01${start_date}\x01${end_date}\x01d\x013`;
+
+      // let size = crc32fast(body)
+         let size = crc32(body)
+      let msg = `${body}\x01${size}`
+
+      let receive_data = await this.send_msg(msg);
+      let msg_body = receive_data.split("{")[1].split("}")[0];
+      let jsonObj = JSON.parse("{" + msg_body + "}");
+
+      return jsonObj;
+    } catch (error) {
+
+      console.log(error)
+
+      return null
+
     }
   }
 }
