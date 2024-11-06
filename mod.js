@@ -1,10 +1,10 @@
 import pako from 'npm:pako'
-
+import * as Strutil from './utils/strutil.js'
 
 // import { crc32fast } from './crc32/crc32_wasm.js'
 
 
-import  {crc32}  from "https://deno.land/x/crc32wasm_deno@v0.0.2/mod.ts.js";
+import { crc32 } from "https://deno.land/x/crc32wasm_deno@v0.0.2/mod.ts.js";
 
 import * as cons from "./const.js";
 
@@ -195,8 +195,11 @@ export class BaoStockApi {
     // const crc32str = crc32(head_body)
     // console.log(crc32str);
 
-    let msg =
-      "00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010\x011635716994";
+    // let msg =
+    //   "00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010\x011635716994";
+
+
+    let msg = "00.8.90\x0100\x010000000024login\x01anonymous\x01123456\x010\x013460013509"
 
     let receive_data = await this.send_msg(msg);
     // '00.8.80\x0101\x0100000000430\x01success\x01login\x01anonymous\x0120231120162133118\x014058276909<![CDATA[]]>\n'
@@ -218,8 +221,10 @@ export class BaoStockApi {
 
   async query_zz500_stocks() {
     try {
-      let msg =
-        "00.8.80\x0165\x010000000037query_zz500_stocks\x01anonymous\x011\x0110000\x01\x01327066214";
+      // let msg =
+      //   "00.8.90\x0165\x010000000037query_zz500_stocks\x01anonymous\x011\x0110000\x01\x01327066214";
+
+      let msg = '00.8.90\x0165\x010000000037query_zz500_stocks\x01anonymous\x011\x0110000\x01\x011839600167'
 
       let receive_data = await this.send_msg(msg);
       let msg_body = receive_data.split("{")[1].split("}")[0];
@@ -234,8 +239,10 @@ export class BaoStockApi {
   }
   async query_hs300_stocks() {
     try {
-      let msg =
-        "00.8.80\x0161\x010000000037query_hs300_stocks\x01anonymous\x011\x0110000\x01\x01625698251";
+      // let msg =
+      //   "00.8.80\x0161\x010000000037query_hs300_stocks\x01anonymous\x011\x0110000\x01\x01625698251";
+
+      let msg = '00.8.90\x0161\x010000000037query_hs300_stocks\x01anonymous\x011\x0110000\x01\x011536415114'
       let receive_data = await this.send_msg(msg);
       let msg_body = receive_data.split("{")[1].split("}")[0];
 
@@ -250,8 +257,11 @@ export class BaoStockApi {
 
   async query_sz50_stocks() {
     try {
+
+      // let msg =
+      //   "00.8.80\x0163\x010000000036query_sz50_stocks\x01anonymous\x011\x0110000\x01\x01896979375";
       let msg =
-        "00.8.80\x0163\x010000000036query_sz50_stocks\x01anonymous\x011\x0110000\x01\x01896979375";
+        "00.8.90\x0163\x010000000036query_sz50_stocks\x01anonymous\x011\x0110000\x01\x011555705250";
       let receive_data = await this.send_msg(msg);
       let msg_body = receive_data.split("{")[1].split("}")[0];
 
@@ -270,9 +280,9 @@ export class BaoStockApi {
         throw "未登录";
       }
 
-      let msg =
-        "00.8.80\x0145\x010000000037query_stock_basic\x01anonymous\x011\x0110000\x01\x01\x01857658827";
-
+      // let msg =
+      //   "00.8.80\x0145\x010000000037query_stock_basic\x01anonymous\x011\x0110000\x01\x01\x01857658827";
+      let msg = '00.8.90\x0145\x010000000037query_stock_basic\x01anonymous\x011\x0110000\x01\x01\x011304847754'
 
       let receive_data = await this.send_msg(msg);
 
@@ -287,15 +297,94 @@ export class BaoStockApi {
     }
   }
 
-  async query_history_k_data_plus(stock_code, start_date, end_date) {
+  async to_message_header(msg_type, total_msg_length) {
+
+    let total_msg_length_str = total_msg_length + ""
+    let return_str = cons.BAOSTOCK_CLIENT_VERSION + cons.MESSAGE_SPLIT + msg_type +''
+      + cons.MESSAGE_SPLIT +''
+      +
+     
+      Strutil.add_zero_for_string(total_msg_length_str, 10, true)
+//00.8.90\x0159\x010000000040
+      console.log("to_message_header:"+return_str)
+    return return_str
+
+  }
+  async query_history_k_data_plus(stock_code, start_date, end_date, param = 'code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST', frequency = 'd', adjustflag = 3) {
     try {
 
+      // let body = `00.8.80\x0195\x010000000172query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST\x01${start_date}\x01${end_date}\x01d\x013`;
 
-      let body = `00.8.80\x0195\x010000000172query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST\x01${start_date}\x01${end_date}\x01d\x013`;
+      let body1 = `query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01${param}\x01${start_date}\x01${end_date}\x01${frequency}\x01${adjustflag}`
+      let header = await to_message_header(cons.MESSAGE_TYPE_GETKDATAPLUS_REQUEST, body1.length)
+      let body = header + body1
 
-      // let size = crc32fast(body)
-         let size = crc32(body)
+      let size = crc32(body)
+
       let msg = `${body}\x01${size}`
+
+      let receive_data = await this.send_msg(msg);
+      let msg_body = receive_data.split("{")[1].split("}")[0];
+      let jsonObj = JSON.parse("{" + msg_body + "}");
+
+      return jsonObj;
+    } catch (error) {
+
+      console.log(error)
+
+      return null
+
+    }
+  }
+
+  async organize_msg_body(str) {
+
+    let str_arr = str.split(",")
+    console.log(str_arr)
+    // 返回的消息头
+    let msg_body = ""
+    for (let item of str_arr) {
+      msg_body = msg_body + item.trim() +'\\x01'+''
+    }
+
+ 
+console.log(msg_body.length)
+    return msg_body.slice(0, msg_body.length-4 )
+
+  }
+  async query_stock_industry() {
+    try {
+
+      // let body = `00.8.80\x0195\x010000000172query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST\x01${start_date}\x01${end_date}\x01d\x013`;
+
+      // let param = "query_stock_industry," + "anonymous" + ",1," + cons.BAOSTOCK_PER_PAGE_COUNT + "," + code + "," + date
+     
+
+      // let body1 = await this.organize_msg_body(param)
+  
+     
+
+   
+ 
+      // let header = await this.to_message_header(cons.MESSAGE_TYPE_QUERYSTOCKINDUSTRY_REQUEST, param.length)
+      
+    
+
+      // let body = header + body1
+
+      // console.log("header==>"+header)
+      // console.log("body1==>"+body1)
+      // console.log("body==>"+body)
+      // //'00.8.90\x0159\x010000000040query_stock_industry\x01anonymous\x011\x0110000\x01\x01'
+
+      // let size = crc32(body)
+
+      // let msgxx = `${body}\x01${size}`
+
+
+      //
+    
+      let msg='00.8.90\x0159\x010000000040query_stock_industry\x01anonymous\x011\x0110000\x01\x01\x011378362580'
 
       let receive_data = await this.send_msg(msg);
       let msg_body = receive_data.split("{")[1].split("}")[0];

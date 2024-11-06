@@ -6,7 +6,7 @@
 // @contact: baostock@163.com
 
 // 版本信息
-export const BAOSTOCK_CLIENT_VERSION = "00.8.80";
+export const BAOSTOCK_CLIENT_VERSION = "00.8.90";
 export const BAOSTOCK_AUTHOR = "baostock.com";
 export const BAOSTOCK_SERVER_IP = "www.baostock.com"; // localhost  www.baostock.com  10.25.7.4
 export const BAOSTOCK_SERVER_PORT = 10030;
