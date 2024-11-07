@@ -313,17 +313,16 @@ export class BaoStockApi {
   async query_history_k_data_plus(stock_code, start_date, end_date, param = 'code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST', frequency = 'd', adjustflag = 3) {
     try {
 
-      // let body = `00.8.80\x0195\x010000000172query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST\x01${start_date}\x01${end_date}\x01d\x013`;
-
-      let body1 = `query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01${param}\x01${start_date}\x01${end_date}\x01${frequency}\x01${adjustflag}`
-      let header = await to_message_header(cons.MESSAGE_TYPE_GETKDATAPLUS_REQUEST, body1.length)
-      let body = header + body1
-
+      let body1=`query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01${param}\x01${start_date}\x01${end_date}\x01${frequency}\x01${adjustflag}`
+  
+       let body =`00.8.90\x0195\x01${ Strutil.add_zero_for_string(body1.length, 10, true)}${body1}`
       let size = crc32(body)
 
       let msg = `${body}\x01${size}`
 
       let receive_data = await this.send_msg(msg);
+
+      console.log(receive_data)
       let msg_body = receive_data.split("{")[1].split("}")[0];
       let jsonObj = JSON.parse("{" + msg_body + "}");
 
