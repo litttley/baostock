@@ -150,15 +150,13 @@ export class BaoStockApi {
       const receive = mergeUint8Arrays(buffArray)
       const head_bytes = receive.slice(0, cons.MESSAGE_HEADER_LENGTH)
       const head_str = new TextDecoder().decode(head_bytes)
-      console.log(head_str)
-      console.log(head_str.slice(8, 10))
+ 
       // const head_arr = head_str.split(cons.MESSAGE_SPLIT)
 
       if (head_str.slice(8, 10) == '96') {//需要解压
 
-        // console.log('000pppp')
         const head_inner_length = parseInt(head_str.slice(-10))
-        console.log(head_inner_length)
+
 
         let output = pako.inflate(receive.slice(cons.MESSAGE_HEADER_LENGTH, cons.MESSAGE_HEADER_LENGTH + head_inner_length))
         // var output = new jsscompress.inflate();
@@ -179,43 +177,18 @@ export class BaoStockApi {
 
 
   async login() {
-    // let user_id = this.user_id;
-    // let password = this.password;
-    // // # 组织体信息
-    // const msg_body = "login" + cons.MESSAGE_SPLIT + user_id + cons.MESSAGE_SPLIT +
-    //     password + cons.MESSAGE_SPLIT + "0";
-
-    // // # 组织头信息
-    // const msg_header = to_message_header(
-    //     cons.MESSAGE_TYPE_LOGIN_REQUEST, msg_body.replaceAll(cons.MESSAGE_SPLIT, " ").length)
-    // const head_body = msg_header + msg_body
-
-    // console.log(gzipSizeSync(head_body));
-
-    // const crc32str = crc32(head_body)
-    // console.log(crc32str);
-
-    // let msg =
-    //   "00.8.80\x0100\x010000000024login\x01anonymous\x01123456\x010\x011635716994";
+   
 
 
     let msg = "00.8.90\x0100\x010000000024login\x01anonymous\x01123456\x010\x013460013509"
 
     let receive_data = await this.send_msg(msg);
-    // '00.8.80\x0101\x0100000000430\x01success\x01login\x01anonymous\x0120231120162133118\x014058276909<![CDATA[]]>\n'
-    // let msg_header1 = receive_data.slice(0, cons.MESSAGE_HEADER_LENGTH)
-
-    // let msg_body1 = receive_data.slice(cons.MESSAGE_HEADER_LENGTH, -1)
+ 
     if (receive_data.includes("success")) {
       console.log("登录成功");
       this.isLogin = true;
     }
 
-    // const header_arr = msg_header1.split("01")
-
-    // console.log(header_arr)
-    // const body_arr = msg_body1.split("01")
-    // console.log(body_arr)
     return receive_data;
   }
 
@@ -305,8 +278,7 @@ export class BaoStockApi {
       +
      
       Strutil.add_zero_for_string(total_msg_length_str, 10, true)
-//00.8.90\x0159\x010000000040
-      console.log("to_message_header:"+return_str)
+
     return return_str
 
   }
@@ -322,7 +294,7 @@ export class BaoStockApi {
 
       let receive_data = await this.send_msg(msg);
 
-      console.log(receive_data)
+  
       let msg_body = receive_data.split("{")[1].split("}")[0];
       let jsonObj = JSON.parse("{" + msg_body + "}");
 
@@ -339,7 +311,7 @@ export class BaoStockApi {
   async organize_msg_body(str) {
 
     let str_arr = str.split(",")
-    console.log(str_arr)
+
     // 返回的消息头
     let msg_body = ""
     for (let item of str_arr) {
@@ -347,41 +319,14 @@ export class BaoStockApi {
     }
 
  
-console.log(msg_body.length)
+
     return msg_body.slice(0, msg_body.length-4 )
 
   }
   async query_stock_industry() {
     try {
 
-      // let body = `00.8.80\x0195\x010000000172query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST\x01${start_date}\x01${end_date}\x01d\x013`;
-
-      // let param = "query_stock_industry," + "anonymous" + ",1," + cons.BAOSTOCK_PER_PAGE_COUNT + "," + code + "," + date
-     
-
-      // let body1 = await this.organize_msg_body(param)
-  
-     
-
-   
- 
-      // let header = await this.to_message_header(cons.MESSAGE_TYPE_QUERYSTOCKINDUSTRY_REQUEST, param.length)
-      
     
-
-      // let body = header + body1
-
-      // console.log("header==>"+header)
-      // console.log("body1==>"+body1)
-      // console.log("body==>"+body)
-      // //'00.8.90\x0159\x010000000040query_stock_industry\x01anonymous\x011\x0110000\x01\x01'
-
-      // let size = crc32(body)
-
-      // let msgxx = `${body}\x01${size}`
-
-
-      //
     
       let msg='00.8.90\x0159\x010000000040query_stock_industry\x01anonymous\x011\x0110000\x01\x01\x011378362580'
 
