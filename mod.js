@@ -1,10 +1,11 @@
-import pako from 'npm:pako'
+import pako from 'npm:pako@2.1.0'
 import * as Strutil from './utils/strutil.js'
 
 // import { crc32fast } from './crc32/crc32_wasm.js'
 
 
-import { crc32 } from "https://deno.land/x/crc32wasm_deno@v0.0.2/mod.ts.js";
+// import { crc32 } from "https://deno.land/x/crc32wasm_deno@v0.0.2/mod.ts.js";
+import  { crc32 }  from "jsr:@littleyy/crc32wasm-deno@0.0.2";
 
 import * as cons from "./const.js";
 

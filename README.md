@@ -1,5 +1,6 @@
 
-
+## 本库版本发布
+`deno publish --allow-slow-types --allow-dirty `
 ## 使用说明
 
 

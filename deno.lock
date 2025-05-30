@@ -1,40 +1,49 @@
 {
-  "version": "3",
-  "packages": {
-    "specifiers": {
-      "npm:buffer-crc32": "npm:buffer-crc32@0.2.13",
-      "npm:crc-32": "npm:crc-32@1.2.2",
-      "npm:gzip-size": "npm:gzip-size@7.0.0",
-      "npm:pako": "npm:pako@2.1.0",
-      "npm:zlib": "npm:zlib@1.0.5"
+  "version": "5",
+  "specifiers": {
+    "jsr:@littleyy/crc32wasm-deno@*": "0.0.2",
+    "jsr:@littleyy/crc32wasm-deno@0.0.2": "0.0.2",
+    "npm:buffer-crc32@*": "0.2.13",
+    "npm:crc-32@*": "1.2.2",
+    "npm:gzip-size@*": "7.0.0",
+    "npm:pako@*": "2.1.0",
+    "npm:pako@2.1.0": "2.1.0",
+    "npm:zlib@*": "1.0.5"
+  },
+  "jsr": {
+    "@littleyy/crc32wasm-deno@0.0.2": {
+      "integrity": "e93c2fb0e4146939b95a101b23c825a9920b0e17ec8594494508c11cb48ab90c"
+    }
+  },
+  "npm": {
+    "buffer-crc32@0.2.13": {
+      "integrity": "sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==",
+      "tarball": "https://registry.npmmirror.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz"
     },
-    "npm": {
-      "buffer-crc32@0.2.13": {
-        "integrity": "sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==",
-        "dependencies": {}
-      },
-      "crc-32@1.2.2": {
-        "integrity": "sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==",
-        "dependencies": {}
-      },
-      "duplexer@0.1.2": {
-        "integrity": "sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==",
-        "dependencies": {}
-      },
-      "gzip-size@7.0.0": {
-        "integrity": "sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==",
-        "dependencies": {
-          "duplexer": "duplexer@0.1.2"
-        }
-      },
-      "pako@2.1.0": {
-        "integrity": "sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==",
-        "dependencies": {}
-      },
-      "zlib@1.0.5": {
-        "integrity": "sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==",
-        "dependencies": {}
-      }
+    "crc-32@1.2.2": {
+      "integrity": "sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==",
+      "bin": true,
+      "tarball": "https://registry.npmmirror.com/crc-32/-/crc-32-1.2.2.tgz"
+    },
+    "duplexer@0.1.2": {
+      "integrity": "sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==",
+      "tarball": "https://registry.npmmirror.com/duplexer/-/duplexer-0.1.2.tgz"
+    },
+    "gzip-size@7.0.0": {
+      "integrity": "sha512-O1Ld7Dr+nqPnmGpdhzLmMTQ4vAsD+rHwMm1NLUmoUFFymBOMKxCCrtDxqdBRYXdeEPEi3SyoR4TizJLQrnKBNA==",
+      "dependencies": [
+        "duplexer"
+      ],
+      "tarball": "https://registry.npmmirror.com/gzip-size/-/gzip-size-7.0.0.tgz"
+    },
+    "pako@2.1.0": {
+      "integrity": "sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==",
+      "tarball": "https://registry.npmmirror.com/pako/-/pako-2.1.0.tgz"
+    },
+    "zlib@1.0.5": {
+      "integrity": "sha512-40fpE2II+Cd3k8HWTWONfeKE2jL+P42iWJ1zzps5W51qcTsOUKM5Q5m2PFb0CLxlmFAaUuUdJGc3OfZy947v0w==",
+      "scripts": true,
+      "tarball": "https://registry.npmmirror.com/zlib/-/zlib-1.0.5.tgz"
     }
   },
   "redirects": {
