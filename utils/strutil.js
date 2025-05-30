@@ -22,7 +22,7 @@ export function add_zero_for_string(content, length, direction) {
 
 
 
-    console.log("xxxxx:"+content1)
+    // console.log("xxxxx:"+content1)
 
      
     return content1

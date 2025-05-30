@@ -185,7 +185,7 @@ export class BaoStockApi {
     let receive_data = await this.send_msg(msg);
  
     if (receive_data.includes("success")) {
-      console.log("登录成功");
+      // console.log("登录成功");
       this.isLogin = true;
     }
 
@@ -285,6 +285,8 @@ export class BaoStockApi {
   async query_history_k_data_plus(stock_code, start_date, end_date, param = 'code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST', frequency = 'd', adjustflag = 3) {
     try {
 
+      console.log(param)
+
       let body1=`query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01${param}\x01${start_date}\x01${end_date}\x01${frequency}\x01${adjustflag}`
   
        let body =`00.8.90\x0195\x01${ Strutil.add_zero_for_string(body1.length, 10, true)}${body1}`
@@ -294,7 +296,12 @@ export class BaoStockApi {
 
       let receive_data = await this.send_msg(msg);
 
-  
+      console.log(receive_data)
+      if(receive_data?.includes(cons.BSERR_INDICATOR_INVALIED)) {
+        
+        throw new Error(`查询失败，可能是参数错误,${receive_data}`);
+
+      }
       let msg_body = receive_data.split("{")[1].split("}")[0];
       let jsonObj = JSON.parse("{" + msg_body + "}");
 
