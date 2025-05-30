@@ -285,7 +285,7 @@ export class BaoStockApi {
   async query_history_k_data_plus(stock_code, start_date, end_date, param = 'code,date,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST', frequency = 'd', adjustflag = 3) {
     try {
 
-      console.log(param)
+      // console.log(param)
 
       let body1=`query_history_k_data_plus\x01anonymous\x011\x0110000\x01${stock_code}\x01${param}\x01${start_date}\x01${end_date}\x01${frequency}\x01${adjustflag}`
   
@@ -296,7 +296,7 @@ export class BaoStockApi {
 
       let receive_data = await this.send_msg(msg);
 
-      console.log(receive_data)
+      // console.log(receive_data)
       if(receive_data?.includes(cons.BSERR_INDICATOR_INVALIED)) {
         
         throw new Error(`查询失败，可能是参数错误,${receive_data}`);
