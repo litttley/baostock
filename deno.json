@@ -1,4 +1,8 @@
 {
+  "name": "@littleyy/baostock",
+  "version": "0.0.6",
+  "license": "MIT",
+  "exports": "./mod.js",
   "tasks": {
     "login_test": "deno test   -A   ./tests/login_test.js",
     "query_stock_basic_test": "deno test   -A   ./tests/query_stock_basic_test.js",
